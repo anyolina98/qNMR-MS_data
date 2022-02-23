@@ -32,8 +32,8 @@ print(all_samples_df)
 Software_vector <- rep(c("Topspin", "Mnova"), each = 15)
 Method_vector <- rep(c("Internal standard", "PULCON", "PULCON"), each = 5, times = 2)
 Sample_vector <- rep(c(4.007674656, 2.02081900018009, 1.01040950009004, 0.505204750045022, 0.252602375022511, 4.00767465581934, 2.02081900018009, 1.01040950009004, 0.505204750045022, 0.252602375022511, 4.00734981457954, 2.00367490728977, 1.00183745364488, 0.500918726822442, 0.250459363411221), times = 2)
+Sample2_vector <- rep(c("4_Trp_I", "4_Trp_I", "2_Trp_I", "2_Trp_I", "1_Trp_I", "1_Trp_I", "0.5_Trp_I", "0.5_Trp_I", "0.25_Trp_I", "0.25_Trp_I", "4_Trp_P", "4_Trp_P", "2_Trp_P", "2_Trp_P", "1_Trp_P", "1_Trp_P", "0.5_Trp_P", "0.5_Trp_P", "0.25_Trp_P", "0.25_Trp_P", "4_Trp_P", "4_Trp_P", "2_Trp_P", "2_Trp_P", "1_Trp_P", "1_Trp_P", "0.5_Trp_P", "0.5_Trp_P", "0.25_Trp_P", "0.25_Trp_P"), times=2)
 Mean_means_vector <- colMeans(matrix(all_samples_df$`Average [mmol/l Tryptophan]`, nrow = 2))
-SD_vector <- 
   
   average_stdev <- function(x)
     sqrt(SD_1^2 + SD_2^2))/2)
