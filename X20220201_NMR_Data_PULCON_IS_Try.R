@@ -23,40 +23,50 @@ names(means_sd_rsd_df)[names(means_sd_rsd_df) == "new_col"] <- "RSD (%)" # renam
 all_samples_df <- cbind(means_sd_rsd_df, new_col = ((means_sd_rsd_df$`Average [mmol/l Tryptophan]` - means_sd_rsd_df$`Concentration [mmol/l Tryptophan]`)
                                                     / means_sd_rsd_df$`Concentration [mmol/l Tryptophan]`) * 100) # calculate RSD for each sample
 names(all_samples_df)[names(all_samples_df) == "new_col"] <- "RE (%)" # rename column
-print(all_samples_df)
+print(all_samples_df) #print finished df 
 
 
 #-----Table average of average-----
 
 #--creating vectors of table elements 
-Software_vector <- rep(c("Topspin", "Mnova"), each = 15)
-Method_vector <- rep(c("Internal standard", "PULCON", "PULCON"), each = 5, times = 2)
-Sample_vector <- rep(c(4.007674656, 2.02081900018009, 1.01040950009004, 0.505204750045022, 0.252602375022511, 4.00767465581934, 2.02081900018009, 1.01040950009004, 0.505204750045022, 0.252602375022511, 4.00734981457954, 2.00367490728977, 1.00183745364488, 0.500918726822442, 0.250459363411221), times = 2)
-Sample2_vector <- rep(c("4_Trp_I", "4_Trp_I", "2_Trp_I", "2_Trp_I", "1_Trp_I", "1_Trp_I", "0.5_Trp_I", "0.5_Trp_I", "0.25_Trp_I", "0.25_Trp_I", "4_Trp_P", "4_Trp_P", "2_Trp_P", "2_Trp_P", "1_Trp_P", "1_Trp_P", "0.5_Trp_P", "0.5_Trp_P", "0.25_Trp_P", "0.25_Trp_P", "4_Trp_P", "4_Trp_P", "2_Trp_P", "2_Trp_P", "1_Trp_P", "1_Trp_P", "0.5_Trp_P", "0.5_Trp_P", "0.25_Trp_P", "0.25_Trp_P"), times=2)
-Mean_means_vector <- colMeans(matrix(all_samples_df$`Average [mmol/l Tryptophan]`, nrow = 2))
-SD2_vector <- (all_samples_df$Stdev)^2
+Software_vector <- rep(c("Topspin", "Mnova"), each = 15) #create vector for software
+Method_vector <- rep(c("Internal standard", "PULCON", "PULCON"), each = 5, times = 2) #create vector for method
+Sample_vector <- rep(c(4.007674656, 2.02081900018009, 1.01040950009004, 0.505204750045022, 0.252602375022511, 4.00767465581934, 2.02081900018009, 1.01040950009004, 0.505204750045022, 0.252602375022511, 4.00734981457954, 2.00367490728977, 1.00183745364488, 0.500918726822442, 0.250459363411221), times = 2) #create vector with expected concentrations
+Mean_means_vector <- colMeans(matrix(all_samples_df$`Average [mmol/l Tryptophan]`, nrow = 2)) #create vector with average measured concentrations for duplicates 
 
-mean_means_df <- data.frame(cbind(Sample2_vector, Software_vector, Method_vector, Sample_vector, Mean_means_vector)) # combining vectors into df
-mean_means_df$Sample_vector <- as.numeric(as.character(mean_means_df$Sample_vector)) # changing characters into numeric variables  
-mean_means_df$Mean_means_vector <- as.numeric(as.character(mean_means_df$Mean_means_vector))
+SD_vector <- (all_samples_df$Stdev)^2 #create vector for squared SD
+Sample2_vector <- rep(1:30, each = 2) #create vector with numbers for each duplicate 
+SD_df <- data.frame(cbind(Sample2_vector, SD_vector)) #create df
+SD_df$SD_vector <- as.numeric(as.character(SD_df$SD_vector)) #change character into numeric value
 
-library(dplyr)
-mean_means_df <- rename(mean_means_df, c(
-  "Average [mmol/l Tryptophan]" = "Mean_means_vector", # rename columns
-  "Concentration [mmol/l Tryptophan]" = "Sample_vector", "Software" = "Software_vector", "Method" = "Method_vector"
-))
+library(dplyr) #create df for SD of the average concentrations per duplicate 
+SD1_df <- SD_df %>% 
+  group_by(Sample2_vector) %>% 
+  summarise(Stdev = sqrt(sum(SD_vector)/2)) %>% 
+  select(-c(Sample2_vector))
+
+mean_sd_df <- data.frame(cbind(Software_vector, Method_vector, Sample_vector, Mean_means_vector, SD1_df))  # combining vectors into df
+mean_sd_df$Sample_vector <- as.numeric(as.character(mean_sd_df$Sample_vector)) # changing characters into numeric variables  
+mean_sd_df$Mean_means_vector <- as.numeric(as.character(mean_sd_df$Mean_means_vector)) 
+mean_sd_df$Stdev <- as.numeric(as.character(mean_sd_df$Stdev))
+                            
+library(dplyr) # rename columns
+mean_sd_df <- rename(mean_sd_df, c(
+   "Average [mmol/l Tryptophan]" = "Mean_means_vector", 
+   "Concentration [mmol/l Tryptophan]" = "Sample_vector", "Software" = "Software_vector", "Method" = "Method_vector"))
 
 #--calculate RSD
-
+mean_sd_rsd_df <- cbind(mean_sd_df, new_col = (mean_sd_df$Stdev / mean_sd_df$`Average [mmol/l Tryptophan]`) * 100) # calculate RSD for each sample
+names(mean_sd_rsd_df)[names(mean_sd_rsd_df) == "new_col"] <- "RSD (%)" # rename column
 
 #--calculate relative error (RE)
-mean_means_rsd_re_df <- cbind(mean_means_df, new_col = ((mean_means_df$`Average [mmol/l Tryptophan]` - mean_means_df$`Concentration [mmol/l Tryptophan]`)
-                                                        / mean_means_df$`Concentration [mmol/l Tryptophan]`) * 100) # calculate Re for each sample
-names(mean_means_rsd_re_df)[names(mean_means_rsd_re_df) == "new_col"] <- "RE (%)" # rename column
-print(mean_means_rsd_re_df)
+mean_sd_rsd_re_df <- cbind(mean_sd_rsd_df, new_col = ((mean_sd_rsd_df$`Average [mmol/l Tryptophan]` - mean_sd_rsd_df$`Concentration [mmol/l Tryptophan]`)
+                                                        / mean_sd_rsd_df$`Concentration [mmol/l Tryptophan]`) * 100) # calculate Re for each sample
+names(mean_sd_rsd_re_df)[names(mean_sd_rsd_re_df) == "new_col"] <- "RE (%)" # rename column
 
 #--remove 4mM samples with sample preparation mistake 
-average_samples_df <- mean_means_rsd_re_df[-c(1, 6, 16, 21), ]
+average_samples_df <- mean_sd_rsd_re_df[-c(1, 6, 16, 21), ]
+print(average_samples_df) #print finished df
 
 ## ---all_samples_df and average_samples_df contain fully processed tables---##
 #' @title copy to cb 
