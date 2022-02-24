@@ -87,13 +87,16 @@ copy_to_cb(average_samples_df) # copy average_samples_df to clipboard
 
 library(ggplot2)
 library(tidyverse)
-theme_set(theme_bw())
+theme_set(theme_classic(base_size = 12, base_family = "serif", base_line_size = 0.5))
 
 group_vector <- c(1,1,1,1,2,2,2,2,3,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,6) #create group vector 
 average_samples_df_ggplot <- data.frame(cbind(average_samples_df, Group = group_vector))# add groups in order to subset the data into four different plots
 
 
 ggplot(subset(average_samples_df_ggplot, Group %in% 1), aes(x = Concentration..mM.Tryptophan. , y = Average..mM.Tryptophan. )) + 
-  geom_point() + 
+  geom_point(shape=23, fill="black", color="black", size=3) + 
     labs(x = 'Expected concentration [mM Trytophan]', y = 'Average measured concentration [mM Trytophan]') + 
-       geom_smooth(formula = y ~ x, method = 'lm', se = FALSE)
+       geom_smooth(formula = y ~ x, method = 'lm', se = FALSE, colour = "black", size = 0.8) + 
+         theme(axis.text.x = element_text(face= "bold", color = "black", size =8.5), 
+         axis.text.y = element_text(face= "bold", color = "black", size =10))
+                                                                                                    
