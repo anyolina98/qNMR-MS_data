@@ -87,16 +87,25 @@ copy_to_cb(average_samples_df) # copy average_samples_df to clipboard
 
 library(ggplot2)
 library(tidyverse)
-theme_set(theme_classic(base_size = 12, base_family = "serif", base_line_size = 0.5))
+theme_set(theme_classic(base_size = 15, base_family = "serif", base_line_size = 0.7))
 
 group_vector <- c(1,1,1,1,2,2,2,2,3,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,6) #create group vector 
-average_samples_df_ggplot <- data.frame(cbind(average_samples_df, Group = group_vector))# add groups in order to subset the data into four different plots
+average_samples_df_ggplot <- data.frame(cbind(average_samples_df, Group = group_vector))# add groups in order to make 4 subsets of the data
+df_Top_IS <- average_samples_df_ggplot[average_samples_df_ggplot$Group %in% "1", ]  #generate all subsets for the four groups
+df_Top_PU <- average_samples_df_ggplot[average_samples_df_ggplot$Group %in% "2", ]
+df_Mno_IS <- average_samples_df_ggplot[average_samples_df_ggplot$Group %in% "4", ]
+df_Mno_PU <- average_samples_df_ggplot[average_samples_df_ggplot$Group %in% "5", ]
 
+#--insert regression equation & R^2 into plot--- 
 
-ggplot(subset(average_samples_df_ggplot, Group %in% 1), aes(x = Concentration..mM.Tryptophan. , y = Average..mM.Tryptophan. )) + 
+lmod_Top_IS <- lm(Concentration..mM.Tryptophan.~Average..mM.Tryptophan., df_Top_IS) # linear regression model
+summary(lmod_Top_IS) #summary of model gives R-squared and equation
+
+ggplot(df_Top_IS, aes(x = Concentration..mM.Tryptophan. , y = Average..mM.Tryptophan. )) + 
   geom_point(shape=23, fill="black", color="black", size=3) + 
-    labs(x = 'Expected concentration [mM Trytophan]', y = 'Average measured concentration [mM Trytophan]') + 
-       geom_smooth(formula = y ~ x, method = 'lm', se = FALSE, colour = "black", size = 0.8) + 
-         theme(axis.text.x = element_text(face= "bold", color = "black", size =8.5), 
-         axis.text.y = element_text(face= "bold", color = "black", size =10))
+  labs(x = 'Expected concentration [mM Trytophan]', y = 'Average measured concentration [mM Trytophan]') + 
+  geom_smooth(formula = y ~ x, method = 'lm', se = FALSE, colour = "black", size = 0.8) + 
+  theme(axis.text.x = element_text(face= "bold", color = "black", size =12), axis.text.y = element_text(face= "bold", color = "black", size =12)) +
+  annotate("text", x = c(1.5,1.5), y = c(2,1.94), label = c("y = 0.9914x + 0.006","Adjusted R-squared = 0.9999"), size = 4, family = "serif")
+  
                                                                                                     
