@@ -2,12 +2,12 @@
 
 #--import data
 library(readxl)
-X20220201_NMR_Data_PULCON_IS_Try <- read_excel("BPS1/RP1/NMR_data/Quantified_data/20220201_NMR_Data_PULCON_IS_Try.xlsx")
-peaks_df <- X20220201_NMR_Data_PULCON_IS_Try # rename file
+X20220201_NMR_Data_PULCON_IS_Trp <- read_excel("~/BPS1/RP1/NMR_data/Quantified_data/20220201_NMR_Data_PULCON_IS_Trp.xlsx")
+peaks_df <- X20220201_NMR_Data_PULCON_IS_Trp # rename file
 
 #--mean of each sample  
 means_df <- cbind(peaks_df, new_col = rowMeans(peaks_df[, 5:9])) # implement mean of each sample in table
-names(means_df)[names(means_df) == "new_col"] <- "Average [mmol/l Tryptophan]" # rename column
+names(means_df)[names(means_df) == "new_col"] <- "Average [mM Tryptophan]" # rename column
 
 #--calculate standard deviation (SD) 
 library(matrixStats)
@@ -20,8 +20,7 @@ means_sd_rsd_df <- cbind(means_sd_df, new_col = (means_sd_df$Stdev / means_sd_df
 names(means_sd_rsd_df)[names(means_sd_rsd_df) == "new_col"] <- "RSD (%)" # rename column
 
 #--calculate relative error (RE)
-all_samples_df <- cbind(means_sd_rsd_df, new_col = ((means_sd_rsd_df$`Average [mmol/l Tryptophan]` - means_sd_rsd_df$`Concentration [mmol/l Tryptophan]`)
-                                                    / means_sd_rsd_df$`Concentration [mmol/l Tryptophan]`) * 100) # calculate RSD for each sample
+all_samples_df <- cbind(means_sd_rsd_df, new_col = ((means_sd_rsd_df$`Average [mmol/l Tryptophan]` - means_sd_rsd_df$`Concentration [mmol/l Trpptophan]`) / means_sd_rsd_df$`Concentration [mmol/l Trpptophan]`) * 100) # calculate RSD for each sample
 names(all_samples_df)[names(all_samples_df) == "new_col"] <- "RE (%)" # rename column
 print(all_samples_df) #print finished df 
 
@@ -52,16 +51,16 @@ mean_sd_df$Stdev <- as.numeric(as.character(mean_sd_df$Stdev))
                             
 library(dplyr) # rename columns
 mean_sd_df <- rename(mean_sd_df, c(
-   "Average [mmol/l Tryptophan]" = "Mean_means_vector", 
-   "Concentration [mmol/l Tryptophan]" = "Sample_vector", "Software" = "Software_vector", "Method" = "Method_vector"))
+   "Average [mM Tryptophan]" = "Mean_means_vector", 
+   "Concentration [mM Tryptophan]" = "Sample_vector", "Software" = "Software_vector", "Method" = "Method_vector"))
 
 #--calculate RSD
-mean_sd_rsd_df <- cbind(mean_sd_df, new_col = (mean_sd_df$Stdev / mean_sd_df$`Average [mmol/l Tryptophan]`) * 100) # calculate RSD for each sample
+mean_sd_rsd_df <- cbind(mean_sd_df, new_col = (mean_sd_df$Stdev / mean_sd_df$`Average [mM Tryptophan]`) * 100) # calculate RSD for each sample
 names(mean_sd_rsd_df)[names(mean_sd_rsd_df) == "new_col"] <- "RSD (%)" # rename column
 
 #--calculate relative error (RE)
-mean_sd_rsd_re_df <- cbind(mean_sd_rsd_df, new_col = ((mean_sd_rsd_df$`Average [mmol/l Tryptophan]` - mean_sd_rsd_df$`Concentration [mmol/l Tryptophan]`)
-                                                        / mean_sd_rsd_df$`Concentration [mmol/l Tryptophan]`) * 100) # calculate Re for each sample
+mean_sd_rsd_re_df <- cbind(mean_sd_rsd_df, new_col = ((mean_sd_rsd_df$`Average [mM Tryptophan]` - mean_sd_rsd_df$`Concentration [mM Tryptophan]`)
+                                                        / mean_sd_rsd_df$`Concentration [mM Tryptophan]`) * 100) # calculate Re for each sample
 names(mean_sd_rsd_re_df)[names(mean_sd_rsd_re_df) == "new_col"] <- "RE (%)" # rename column
 
 #--remove 4mM samples with sample preparation mistake 
@@ -83,3 +82,18 @@ copy_to_cb <- function(x, sep = "\t", dec = ".", max.size = (200 * 1000)) {
 copy_to_cb(all_samples_df) # copy all_samples_df to clipboard
 copy_to_cb(average_samples_df) # copy average_samples_df to clipboard
 
+
+#------Linear regression equations-----#
+
+library(ggplot2)
+library(tidyverse)
+theme_set(theme_bw())
+
+group_vector <- c(1,1,1,1,2,2,2,2,3,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,6) #create group vector 
+average_samples_df_ggplot <- data.frame(cbind(average_samples_df, Group = group_vector))# add groups in order to subset the data into four different plots
+
+
+ggplot(subset(average_samples_df_ggplot, Group %in% 1), aes(x = Concentration..mM.Tryptophan. , y = Average..mM.Tryptophan. )) + 
+  geom_point() + 
+    labs(x = 'Expected concentration [mM Trytophan]', y = 'Average measured concentration [mM Trytophan]') + 
+       geom_smooth(formula = y ~ x, method = 'lm', se = FALSE)
