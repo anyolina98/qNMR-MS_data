@@ -103,6 +103,7 @@ summary(lmod_Top_IS) #summary of model gives R-squared and equation
 
 ggplot(df_Top_IS, aes(x = Concentration..mM.Tryptophan. , y = Average..mM.Tryptophan. )) + 
   geom_point(shape=23, fill="black", color="black", size=3) + 
+  geom_errorbar(aes(ymin = Average..mM.Tryptophan.-Stdev, ymax = Average..mM.Tryptophan.+Stdev),width = 0.1) + 
   labs(x = 'Expected concentration [mM Trytophan]', y = 'Average measured concentration [mM Trytophan]') + 
   geom_smooth(formula = y ~ x, method = 'lm', se = FALSE, colour = "black", size = 0.8) + 
   theme(axis.text.x = element_text(face= "bold", color = "black", size =10), axis.text.y = element_text(face= "bold", color = "black", size =10)) +
