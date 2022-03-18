@@ -20,7 +20,7 @@ means_sd_rsd_df <- cbind(means_sd_df, new_col = (means_sd_df$Stdev / means_sd_df
 names(means_sd_rsd_df)[names(means_sd_rsd_df) == "new_col"] <- "RSD (%)" # rename column
 
 #--calculate relative error (RE)
-all_samples_df <- cbind(means_sd_rsd_df, new_col = ((means_sd_rsd_df$`Average [mM/L Tryptophan]` - means_sd_rsd_df$`Concentration [mM/L Tryptophan]`) / means_sd_rsd_df$`Concentration [mM/L Tryptophan]`) * 100) # calculate RSD for each sample
+all_samples_df <- cbind(means_sd_rsd_df, new_col = ((means_sd_rsd_df$`Average [mM/L Tryptophan]` - means_sd_rsd_df$`Concentration [mM/L Tryptophan]`) / means_sd_rsd_df$`Concentration [mM/L Tryptophan]`) * 100) # calculate RE for each sample
 names(all_samples_df)[names(all_samples_df) == "new_col"] <- "RE (%)" # rename column
 print(all_samples_df) # print finished df
 
