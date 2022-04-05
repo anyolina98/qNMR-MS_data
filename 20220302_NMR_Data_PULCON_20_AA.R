@@ -1,8 +1,7 @@
 
 #--import data
 library(readxl)
-X20220302_NMR_Data_PULCON_20_AA <- read_excel("~/BPS1/RP1/NMR_data/Quantified_data/20220302_NMR_Data_PULCON_20_AA.xlsx")
-peaks_df <- X20220302_NMR_Data_PULCON_20_AA # rename file
+peaks_df <- read_excel("~/BPS1/RP1/NMR_data/Quantified_data/20220302_NMR_Data_PULCON_20_AA.xlsx")
 
 #--mean of each sample  
 means_vector <- rowMeans(peaks_df[, 4:10],na.rm = TRUE) # create vector with mean of each row 
