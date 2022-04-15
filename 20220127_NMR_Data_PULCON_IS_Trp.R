@@ -2,8 +2,7 @@
 
 #--import data
 library(readxl)
-X20220201_NMR_Data_PULCON_IS_Trp <- read_excel("~/BPS1/RP1/NMR_data/Quantified_data/20220201_NMR_Data_PULCON_IS_Trp.xlsx")
-peaks_df <- X20220201_NMR_Data_PULCON_IS_Trp # rename file
+peaks_df <- read_excel("~/BPS1/RP1/NMR_data/Quantified_data/2022/20220127_NMR_Data_PULCON_IS_Trp.xlsx")
 
 #--mean of each sample  
 means_df <- cbind(peaks_df, new_col = rowMeans(peaks_df[, 5:9])) # implement mean of each sample in table
@@ -11,7 +10,7 @@ names(means_df)[names(means_df) == "new_col"] <- "Average [mM/L Tryptophan]" # r
 
 #--calculate standard deviation (SD) 
 library(matrixStats)
-concentrations_matrix <- data.matrix(means_df[, c(5:9)], rownames.force = NA) # convert df into matrix
+concentrations_matrix <- data.matrix(means_df[, 5:9], rownames.force = NA) # convert df into matrix
 means_sd_df <- cbind(means_df, new_col = as.data.frame(rowSds(concentrations_matrix))) # calculate SD of each sample and convert to df
 names(means_sd_df)[names(means_sd_df) == "rowSds(concentrations_matrix)"] <- "Stdev" # rename column
 

@@ -2,7 +2,7 @@
 
 #--import data
 library(readxl)
-peaks_df <- read_excel("~/BPS1/RP1/NMR_data/Quantified_data/20220317_NMR_Data_PULCON_Amine_Mix.xlsx")
+peaks_df <<- read_excel("~/BPS1/RP1/NMR_data/Quantified_data/2022/20220317_NMR_Data_PULCON_20_AA.xlsx")
 
 #--mean of each sample  
 means_vector <- rowMeans(peaks_df[, 3:7],na.rm = TRUE) # create vector with mean of each row 
